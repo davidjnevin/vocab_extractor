@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 vocab_extractor/reports/
 .DS_Store
+*.db
