@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "vocab-extractor"
+version = "0.1.0"
+description = ""
+authors = ["David J Nevin <66497218+davidjnevin@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "vocab_extractor"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
