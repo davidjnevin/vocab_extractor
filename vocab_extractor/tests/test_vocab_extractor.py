@@ -1,42 +1,86 @@
-import os
 import sqlite3
-from vocab_extractor.app import extract_vocabulary, create_database, insert_word
+import pytest
+from docx import Document
+from pathlib import Path
+
+from vocab_extractor.app import (
+    extract_vocabulary,
+    read_file,
+    create_database,
+    insert_word,
+    process_reports,
+    batch_files,
+    process_all_reports,
+)
 
 
 def test_extract_vocabulary():
-    sample_text = "The quick brown fox jumps over the lazy dog."
-    expected_vocab = {'The', 'quick', 'brown', 'fox', 'jumps', 'over', 'the', 'lazy', 'dog'}
-    assert extract_vocabulary(sample_text) == expected_vocab
+    text = "This is a sample text. It contains some words, punctuation, and numbers like 1234."
+    expected_result = {"This", "is", "a", "sample", "text", "It", "contains", "some", "words", "punctuation", "and", "numbers", "like", "1234"}
+    assert extract_vocabulary(text) == expected_result
 
 
-def test_create_database():
-    test_db_name = 'test_vocabulary.db'
-    if os.path.exists(test_db_name):
-        os.remove(test_db_name)
+def test_read_file(tmp_path: Path):
+    # Create a temporary .docx file for testing
+    temp_docx = tmp_path / "test.docx"
+    doc = Document()
+    doc.add_paragraph("This is a temporary file for testing.")
+    doc.save(temp_docx)
 
-    conn = create_database(test_db_name)
-    c = conn.cursor()
-    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='vocabulary'")
-    assert c.fetchone() is not None
-
-    conn.close()
-    os.remove(test_db_name)
+    content = read_file(str(temp_docx))
+    assert content.strip() == "This is a temporary file for testing."
 
 
-def test_insert_word():
-    test_db_name = 'test_vocabulary.db'
-    if os.path.exists(test_db_name):
-        os.remove(test_db_name)
+def test_create_database(tmp_path: Path):
+    temp_db = tmp_path / "test.db"
+    conn = create_database(str(temp_db))
+    assert isinstance(conn, sqlite3.Connection)
 
-    conn = create_database(test_db_name)
-    test_word = 'example'
-    insert_word(conn, test_word)
 
-    c = conn.cursor()
-    c.execute("SELECT word FROM vocabulary WHERE word=?", (test_word,))
-    assert c.fetchone()[0] == test_word
+def test_insert_word(tmp_path: Path):
+    temp_db = tmp_path / "test.db"
+    conn = create_database(str(temp_db))
+    word = "test"
+    insert_word(word, conn)
+    cursor = conn.execute("SELECT word FROM vocabulary WHERE word=?", (word,))
+    assert cursor.fetchone()[0] == word
 
-    insert_word(conn, test_word)
-    c.execute("SELECT COUNT(*) FROM vocabulary WHERE word=?", (test_word,))
-    assert c
+
+def test_process_reports(tmp_path: Path):
+    # Create a temporary .docx file for testing
+    test_docx = tmp_path / "test.docx"
+    doc = Document()
+    doc.add_paragraph("This is a test document for process_reports.")
+    doc.save(test_docx)
+
+    temp_db = tmp_path / "test.db"
+    conn = create_database(str(temp_db))
+    report_files = [str(test_docx)]
+    process_reports(report_files, conn)
+    cursor = conn.execute("SELECT word FROM vocabulary")
+    words = [row[0] for row in cursor.fetchall()]
+    assert "test" in words
+
+
+def test_batch_files():
+    report_files = list(range(10))
+    batch_gen = batch_files(report_files, batch_size=3)
+    batches = [batch for batch in batch_gen]
+    assert len(batches) == 4
+
+
+def test_process_all_reports(tmp_path: Path):
+    # Create a temporary .docx file for testing
+    test_docx = tmp_path / "test.docx"
+    doc = Document()
+    doc.add_paragraph("This is a test document for process_all_reports.")
+    doc.save(test_docx)
+
+    temp_db = tmp_path / "test.db"
+    conn = create_database(str(temp_db))
+    report_files = [str(test_docx)]
+    process_all_reports(report_files, conn)
+    cursor = conn.execute("SELECT word FROM vocabulary")
+    words = [row[0] for row in cursor.fetchall()]
+    assert "test" in words
 
