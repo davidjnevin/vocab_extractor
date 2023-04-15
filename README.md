@@ -1,16 +1,13 @@
 # Vocab Extractor (Early Beta Tokenizer)
 
-Vocab Extractor is a Python script that processes Microsoft Word documents and extracts unique words and their part of speech (POS) tags. The extracted words and POS tags are then saved in an SQLite database.
+This version of the Vocabulary Extractor script processes a collection of `.doc` and `.docx` files and extracts unique words and their corresponding Part of Speech (POS) tags. It saves the extracted (word, pos) pairs into an SQLite database.
 
-## Functionality
+## Features
 
-The script follows these steps:
-
-1. Read Word documents (.docx files) from a specified directory
-2. Extract the text content from each document
-3. Tokenize the text using the nltk library
-4. Determine the POS tags for each token
-5. Store the unique words and their POS tags in an SQLite database
+- Tokenizes the document content using the NLTK library.
+- Extracts Part of Speech (POS) information for each word.
+- Efficiently inserts unique (word, pos) pairs into an SQLite database using batch inserts and in-memory data structure.
+- Includes a test suite to ensure the functionality of the script.
 
 ## Test Suite
 
