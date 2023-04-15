@@ -1,26 +1,35 @@
 import sqlite3
-import pytest
-from pathlib import Path
 
-from vocab_extractor.io_utils import create_database, insert_words
-
-
-def test_create_database(tmp_path: Path):
-    temp_db = tmp_path / "test.db"
-    conn = create_database(str(temp_db))
-    assert isinstance(conn, sqlite3.Connection)
+from vocab_extractor.io_utils import (clear_vocabulary_table, create_database,
+                                      insert_words)
 
 
-def test_insert_words(tmp_path: Path):
-    temp_db = tmp_path / "test.db"
-    conn = create_database(str(temp_db))
-    words = [("test", "NN"), ("sample", "JJ")]
-    insert_words(words, conn)
+def test_create_database(tmp_path):
+    db_file = tmp_path / "test.db"
+    with create_database(db_file) as conn:
+        assert conn is not None
+        assert isinstance(conn, sqlite3.Connection)
+        assert db_file.is_file()
 
-    cursor = conn.cursor()
-    cursor.execute("SELECT word, pos FROM vocabulary")
-    result = cursor.fetchall()
 
-    assert len(result) == 2
-    assert ("test", "NN") in result
-    assert ("sample", "JJ") in result
+def test_insert_words(tmp_path):
+    db_file = tmp_path / "test.db"
+    with create_database(db_file) as conn:
+        words = [("hello", "NN"), ("world", "NN"), ("test", "NN")]
+        insert_words(words, conn)
+        cur = conn.cursor()
+        cur.execute("SELECT word, pos FROM vocabulary")
+        result = cur.fetchall()
+        assert set(result) == {("hello", "NN"), ("world", "NN"), ("test", "NN")}
+
+
+def test_clear_vocabulary_table(tmp_path):
+    db_file = tmp_path / "test.db"
+    with create_database(db_file) as conn:
+        words = [("hello", "NN"), ("world", "NN"), ("test", "NN")]
+        insert_words(words, conn)
+        clear_vocabulary_table(conn)
+        cur = conn.cursor()
+        cur.execute("SELECT word, pos FROM vocabulary")
+        result = cur.fetchall()
+        assert len(result) == 0
