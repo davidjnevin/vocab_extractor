@@ -1,15 +1,12 @@
 import sqlite3
+from typing import Tuple
 
 from docx import Document
 
 
-def insert_word(word: str, pos: str, conn: sqlite3.Connection) -> None:
-    try:
-        conn.execute("INSERT INTO vocabulary (word, pos) VALUES (?, ?)", (word, pos))
-        conn.commit()
-    except sqlite3.IntegrityError as err:
-        print(f"Update Error - {err}")
-
+def insert_words(words: list[Tuple[str, str]], conn: sqlite3.Connection) -> None:
+    with conn:
+        conn.executemany("INSERT OR IGNORE INTO vocabulary (word, pos) VALUES (?, ?)", words)
 
 def create_database(db_name: str) -> sqlite3.Connection:
     conn = sqlite3.connect(db_name)
