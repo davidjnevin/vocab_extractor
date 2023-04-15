@@ -1,10 +1,18 @@
 import sqlite3
 from pathlib import Path
+import pytest
 
 from docx import Document
 
-from vocab_extractor.app import (batch_files, create_database,
-                                 process_all_reports, process_reports)
+from vocab_extractor.app import (
+    process_reports,
+    batch_files,
+    process_all_reports,
+)
+
+from vocab_extractor.io_utils import (
+    create_database, read_file
+)
 
 
 def test_create_database(tmp_path: Path):
@@ -24,9 +32,10 @@ def test_process_reports(tmp_path: Path):
     conn = create_database(str(temp_db))
     report_files = [str(test_docx)]
     process_reports(report_files, conn)
-    cursor = conn.execute("SELECT word FROM vocabulary")
-    words = [row[0] for row in cursor.fetchall()]
-    assert "test" in words
+    with conn:
+        cursor = conn.execute("SELECT word, pos FROM vocabulary")
+        words = [(row[0], row[1]) for row in cursor.fetchall()]
+    assert ("test", "NN") in words
 
 
 def test_batch_files():
@@ -47,6 +56,8 @@ def test_process_all_reports(tmp_path: Path):
     conn = create_database(str(temp_db))
     report_files = [str(test_docx)]
     process_all_reports(report_files, conn)
-    cursor = conn.execute("SELECT word FROM vocabulary")
-    words = [row[0] for row in cursor.fetchall()]
-    assert "test" in words
+    with conn:
+        cursor = conn.execute("SELECT word, pos FROM vocabulary")
+        words = [(row[0], row[1]) for row in cursor.fetchall()]
+    assert ("test", "NN") in words
+
