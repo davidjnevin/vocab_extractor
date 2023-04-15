@@ -27,11 +27,6 @@ def process_reports(report_files: list[str], conn: sqlite3.Connection) -> None:
     insert_words(word_pos_pairs_to_insert, conn)
 
 
-    # def batch_files(report_files: list[str], batch_size: int = 2) -> list[str]:
-    # for i in range(0, len(report_files), batch_size):
-    #    yield report_files[i: i + batch_size]
-
-
 def process_all_reports(report_files: list[str], conn: sqlite3.Connection, batch_size: int) -> None:
     for idx in range(0, len(report_files), batch_size):
         batch = report_files[idx:idx + batch_size]
