@@ -1,13 +1,11 @@
+import argparse
 import glob
 import sqlite3
-import argparse
-
 
 from vocab_extractor.extract import extract_vocabulary
-from vocab_extractor.io_utils import create_database, insert_words, read_file, clear_vocabulary_table
-from vocab_extractor.vocab_cli import parse_args, check_db_name
-
-batch_size = 2
+from vocab_extractor.io_utils import (clear_vocabulary_table, create_database,
+                                      insert_words, read_file)
+from vocab_extractor.vocab_cli import check_db_name, parse_args
 
 
 def process_reports(report_files: list[str], conn: sqlite3.Connection) -> None:
@@ -29,21 +27,9 @@ def process_reports(report_files: list[str], conn: sqlite3.Connection) -> None:
 
 def process_all_reports(report_files: list[str], conn: sqlite3.Connection, batch_size: int) -> None:
     for idx in range(0, len(report_files), batch_size):
-        batch = report_files[idx:idx + batch_size]
+        batch = report_files[idx : idx + batch_size]
         process_reports(batch, conn)
-        print(f"Processed batch {idx/batch_size}")
-
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="Extract vocabulary from reports and store them in a database.")
-    parser.add_argument("--batch-size", type=int, default=100, help="The number of documents to process in each batch (default: 100)",)
-    parser.add_argument(
-        "--db-name",
-        type=str,
-        default="vocabulary.db",
-        help="The name of the SQLite database file to store the vocabulary (default: vocabulary.db)",
-    )
-    return parser.parse_args()
+        print(f"Processed batch {idx}")
 
 
 def main() -> None:
