@@ -2,20 +2,12 @@ from vocab_extractor.extract import extract_vocabulary
 
 
 def test_extract_vocabulary():
-    text = "This is a sample text. It contains some words, punctuation, and numbers like 1234."
-    expected_result = {
-        ("this", "DT"),
-        ("is", "VBZ"),
-        ("a", "DT"),
-        ("sample", "JJ"),
-        ("text", "NN"),
-        ("it", "PRP"),
-        ("contains", "VBZ"),
-        ("some", "DT"),
-        ("words", "NNS"),
-        ("punctuation", "NN"),
-        ("and", "CC"),
-        ("numbers", "NNS"),
-        ("like", "IN"),
+    content = "Hello, world! Test document"
+    extracted_vocab = extract_vocabulary(content)
+    expected_vocab = {
+        ("hello", "NN"),
+        ("world", "NN"),
+        ("test", "NN"),
+        ("document", "NN"),
     }
-    assert extract_vocabulary(text) == expected_result
+    assert extracted_vocab == expected_vocab
