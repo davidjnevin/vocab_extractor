@@ -1,8 +1,9 @@
 import sqlite3
 from pathlib import Path
+
 from docx import Document
 
-from vocab_extractor.app import (batch_files, create_database, insert_word,
+from vocab_extractor.app import (batch_files, create_database,
                                  process_all_reports, process_reports)
 
 
@@ -10,15 +11,6 @@ def test_create_database(tmp_path: Path):
     temp_db = tmp_path / "test.db"
     conn = create_database(str(temp_db))
     assert isinstance(conn, sqlite3.Connection)
-
-
-def test_insert_word(tmp_path: Path):
-    temp_db = tmp_path / "test.db"
-    conn = create_database(str(temp_db))
-    word = "test"
-    insert_word(word, conn)
-    cursor = conn.execute("SELECT word FROM vocabulary WHERE word=?", (word,))
-    assert cursor.fetchone()[0] == word
 
 
 def test_process_reports(tmp_path: Path):
