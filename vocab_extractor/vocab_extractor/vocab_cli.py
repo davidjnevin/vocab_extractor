@@ -3,21 +3,20 @@ import os
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Vocabulary Extractor")
+    parser = argparse.ArgumentParser(description="Extract vocabulary from reports and store them in a database.")
     parser.add_argument(
-        "--batch_file",
-        type=str,
-        default="batch.txt",
-        help="Path to the batch file containing paths to document files.",
+        "--batch-size",
+        type=int,
+        default=100,
+        help="The number of documents to process in each batch (default: 100)",
     )
     parser.add_argument(
-        "--db_name",
+        "--db-name",
         type=str,
         default="vocabulary.db",
-        help="Name of the SQLite database to store the extracted vocabulary.",
+        help="The name of the SQLite database file to store the vocabulary (default: vocabulary.db)",
     )
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 def check_db_name(db_name):
