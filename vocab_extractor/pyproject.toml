@@ -1,17 +1,18 @@
 [tool.poetry]
-name = "vocab-extractor"
-version = "0.1.0"
+name = "vocab_extractor"
+version = "0.5.0"
+license = "MIT"
 description = ""
 authors = ["David J Nevin <dnevincodes@gmail.com>"]
 readme = "README.md"
-packages = [{include = "vocab_extractor"}]
+repository = "https://github.com/davidjnevin/vocab_extractor"
+packages = [{include = "vocab_extractor", from = "src"},]
 
 [tool.poetry.dependencies]
 python = "^3.11"
 textract = "^1.6.5"
 python-docx = "^0.8.11"
 nltk = "^3.8.1"
-
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.1"
@@ -20,3 +21,6 @@ python-docx = "^0.8.11"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+vocab_extractor = 'vocab_extractor.app:main'
