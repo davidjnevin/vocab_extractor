@@ -8,6 +8,7 @@ This version of the Vocabulary Extractor script processes a collection of `.doc`
 - Extracts Part of Speech (POS) information for each word.
 - Efficiently inserts unique (word, pos) pairs into an SQLite database using batch inserts and in-memory data structure.
 - Includes a test suite to ensure the functionality of the script.
+- Command line interface for easy execution and configuration
 
 ## Test Suite
 
@@ -20,6 +21,7 @@ A comprehensive test suite is available to test the functionality of the Vocab E
 - Processing reports
 - Batching files
 - Processing all reports
+- Command line interface inputs
 
 To run the tests, make sure you have `pytest` installed:
 
