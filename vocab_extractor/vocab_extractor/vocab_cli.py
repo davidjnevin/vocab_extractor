@@ -2,7 +2,7 @@ import argparse
 import os
 
 
-def parse_args():
+def parse_args(args=None):
     parser = argparse.ArgumentParser(description="Extract vocabulary from reports and store them in a database.")
     parser.add_argument(
         "--batch-size",
@@ -16,13 +16,14 @@ def parse_args():
         default="vocabulary.db",
         help="The name of the SQLite database file to store the vocabulary (default: vocabulary.db)",
     )
-    return parser.parse_args()
+
+    return parser.parse_args(args)
 
 
-def check_db_name(db_name):
+def check_db_name(db_name, input_func=input):
     while os.path.exists(db_name):
         print(f"Warning: The specified database '{db_name}' already exists. Overwriting it will result in data loss.")
-        user_input = input("Enter 'c' to continue and overwrite, or provide a new database name: ").strip()
+        user_input = input_func("Enter 'c' to continue and overwrite, or provide a new database name: ").strip()
         if user_input.lower() == "c":
             break
         elif user_input != "":
