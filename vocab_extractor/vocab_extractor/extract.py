@@ -15,4 +15,3 @@ def extract_vocabulary(text: str) -> Set[tuple[str, str]]:
     # Create a set of unique (word, POS) tuples
     words = set((word, pos) for word, pos in tagged_tokens if word.isalpha())
     return words
-
